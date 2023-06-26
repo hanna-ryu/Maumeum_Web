@@ -13,9 +13,7 @@ import {
 } from './routers/index.js';
 import { volunteerCommentRouter } from './routers/volunteerCommentRouter.js';
 import { postCommentRouter } from './routers/postCommentRouter.js';
-import { error } from 'console';
 import { logger } from './utils/logger.js';
-import morgan from 'morgan';
 
 dotenv.config();
 
@@ -57,12 +55,6 @@ app.use('/api', communityRouter);
 app.use('/api', postCommentRouter);
 app.use('/api', reviewRouter);
 app.use('/api', teamAuthRouter);
-
-// app.use(
-//   morgan('common', {
-//     stream: { write: (message) => logger.info(message.trim()) },
-//   }),
-// );
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   // @ts-ignore

@@ -1,0 +1,10 @@
+# pack-refs with: peeled fully-peeled sorted 
+40a63adf00a0ddf592f72f94f91367574b3d0bcc refs/heads/15-be-winston-logging
+f5f7611ff9c5ff4ea77b64875b3a4ac816692f1a refs/heads/dev
+666881adc6a212682e80a508a232931963ca4b92 refs/heads/dev-test
+5b9d4d0b7a209e28bb5feda6967bb4bcc1eba42e refs/heads/feature-community
+e07265b4cc94e77feb7760b46dda1cbed88fe949 refs/heads/feature-mail
+8c21fdfdf7d10c2c80a248118e13bc81c8de2065 refs/heads/feature-teamAuth
+31c6fc6cc83906441babec2463bae7ed30763620 refs/heads/feature_community
+10eb8c417b5ec4a32ad5f3e2ba95d1d1228b2ff7 refs/heads/feature_tk
+40a63adf00a0ddf592f72f94f91367574b3d0bcc refs/heads/master

@@ -152,7 +152,7 @@ export class CommunityService {
     }: {
       title: string;
       content: string;
-      images?: string;
+      images?: string[];
       postType: string;
     },
   ) {

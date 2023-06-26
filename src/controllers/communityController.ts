@@ -10,8 +10,11 @@ import { UserService } from '../services/userService.js';
 import { countReportedTimes } from '../utils/reportedTimesData.js';
 import { PostCommentService } from '../services/postCommentService.js';
 
-interface MulterRequest extends Request {
-  files: any;
+interface MyFile extends Express.Multer.File {
+  // 추가적인 사용자 정의 속성을 선언할 수도 있습니다
+  // 예: 필요한 경우 가공된 파일 경로 등
+  processedPath: string;
+  key: string;
 }
 
 export class CommunityController {
@@ -24,9 +27,9 @@ export class CommunityController {
     const user_id = req.id;
     const { title, content, postType, isReported } = req.body;
     if (req.files) {
-      const files = (req as MulterRequest).files;
-      const newPath = files.map((file: any) => {
-        return `images/${file.filename}`;
+      const files = req.files as MyFile[];
+      const newPath = files.map((file) => {
+        return `${file.key}`;
       });
 
       const newPost = await this.communityService.createPost({
@@ -135,10 +138,9 @@ export class CommunityController {
       const { title, content, postType } = req.body;
 
       if (req.files) {
-        const files = (req as MulterRequest).files;
-
-        const newPath = files.map((v: any) => {
-          return v.path.replace('public/', '');
+        const files = req.files as MyFile[];
+        const newPath = files.map((file) => {
+          return `${file.key}`;
         });
 
         const patchPosts = await this.communityService.findOneAndUpdate(id, {

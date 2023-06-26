@@ -115,9 +115,7 @@ class TeamAuthController {
           'BAD_REQUEST',
         );
       }
-
-      sendMail(userInfo.email, userInfo.nickname, teamAuth.teamName);
-
+      await sendMail(userInfo.email, userInfo.nickname, teamAuth.teamName);
       res
         .status(STATUS_CODE.CREATED)
         .json(buildResponse(null, updatedAuthStatus));

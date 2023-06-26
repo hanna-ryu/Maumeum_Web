@@ -16,6 +16,7 @@ import { countReportedTimes } from '../utils/reportedTimesData.js';
 
 interface MyFile extends Express.Multer.File {
   processedPath: string;
+  key: string;
 }
 
 interface ReviewData {
@@ -97,10 +98,9 @@ class ReviewController {
       const user_id = req.id;
       const { title, content, volunteer_id }: ReviewData = req.body;
 
-      const files = (req.files as MyFile[]) || [];
-      logger.debug(files);
-      const newPath = files.map((file: any) => {
-        return `images/${file.filename}`;
+      const files = req.files as MyFile[];
+      const newPath = files.map((file) => {
+        return `${file.key}`;
       });
 
       const volunteer =
