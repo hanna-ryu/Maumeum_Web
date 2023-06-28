@@ -10,7 +10,7 @@ type Token = {
 function makeAccessToken(user: any) {
   const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
   const token = jwt.sign({ user_id: user._id, role: user.role }, secretKey, {
-    expiresIn: '10s',
+    expiresIn: '1h',
   });
   const userInfoWithUserToken: Token = {
     token,
