@@ -14,6 +14,7 @@ import {
 import { volunteerCommentRouter } from './routers/volunteerCommentRouter.js';
 import { postCommentRouter } from './routers/postCommentRouter.js';
 import { logger } from './utils/logger.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const app = express();
 const __dirname = path.resolve();
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(cors()); //cors에러 방지
+app.use(cookieParser());
 app.use(express.json()); // 바디파서
 app.use(express.urlencoded({ extended: true }));
 

@@ -60,10 +60,18 @@ class UserService {
     const user = await UserModel.findOne({ email });
     return user;
   }
+
   //object_id로 유저 찾기 (이메일, 닉네임, 폰)
   public async getUserById(_id: ObjectId) {
     const user = await UserModel.findById({ _id }).select(
-      'email role nickname phone introduction image authorization uuid',
+      'id email role nickname phone introduction image authorization uuid refreshToken',
+    );
+    return user;
+  }
+
+  public async getUserByRefreshToken(refreshToken: string) {
+    const user = await UserModel.findOne({ refreshToken: refreshToken }).select(
+      'id email role nickname phone uuid refreshToken',
     );
     return user;
   }

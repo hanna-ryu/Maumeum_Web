@@ -10,12 +10,13 @@ type Token = {
 function makeAccessToken(user: any) {
   const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
   const token = jwt.sign({ user_id: user._id, role: user.role }, secretKey, {
-    expiresIn: '2h',
+    expiresIn: '10s',
   });
-  const userInfoWithUserToken = <Token>{};
-  userInfoWithUserToken.token = token;
-  userInfoWithUserToken.uuid = user.uuid;
-  userInfoWithUserToken.role = user.role;
+  const userInfoWithUserToken: Token = {
+    token,
+    uuid: user.uuid,
+    role: user.role,
+  };
 
   return userInfoWithUserToken;
 }
@@ -25,8 +26,8 @@ function makeRefreshToken(user: any) {
   const token = jwt.sign({ user_id: user._id }, secretKey, {
     expiresIn: '14 days',
   });
-  const userInfoWithUserToken = <Token>{};
-  userInfoWithUserToken.token = token;
+  const userInfoWithUserToken = token;
+  // userInfoWithUserToken.token = token;
 
   return userInfoWithUserToken;
 }
