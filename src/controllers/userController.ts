@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../services/index.js';
 import bcrypt from 'bcrypt';
-import { makeJwtToken } from '../utils/jwtTokenMaker.js';
+import { makeAccessToken, makeRefreshToken } from '../utils/jwtTokenMaker.js';
 import { ObjectId } from 'mongodb';
 import { CONSTANTS } from '../utils/Constants.js';
 import { asyncHandler } from '../middlewares/asyncHandler.js';
@@ -11,6 +11,7 @@ import { buildResponse } from '../utils/builderResponse.js';
 import { AppError } from '../misc/AppError.js';
 import { commonErrors } from '../misc/commonErrors.js';
 import { logger } from '../utils/logger.js';
+import { isRefreshTokenExpired } from '../middlewares/isRefreshTokenExpired.js';
 declare global {
   namespace Express {
     interface Request {
@@ -119,7 +120,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authenticationError} : 가입내역 없음`,
           STATUS_CODE.BAD_REQUEST,
-          'BAD_REQUEST',
+          'BAD_REQUEST : 가입내역 없음',
         );
       }
 
@@ -127,7 +128,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authorizationError} : 탈퇴`,
           STATUS_CODE.FORBIDDEN,
-          'FORBIDDEN',
+          'FORBIDDEN : 탈퇴',
         );
       }
       const validPassword = await bcrypt.compare(password, user.password);
@@ -135,11 +136,22 @@ class UserController {
         throw new AppError(
           `${commonErrors.authorizationError} : 비밀번호 불일치`,
           STATUS_CODE.FORBIDDEN,
-          'FORBIDDEN',
+          'FORBIDDEN : 비밀번호 불일치',
         );
       }
-      const madeToken = makeJwtToken(user);
-      res.status(STATUS_CODE.CREATED).json(buildResponse(null, madeToken));
+      const accessToken = makeAccessToken(user);
+      const refreshToken = makeRefreshToken(user);
+
+      res.cookie('accessToken', accessToken.token, { httpOnly: true });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      await this.userService.changeRefreshToken(user.id, refreshToken);
+
+      res.status(STATUS_CODE.CREATED).json(
+        buildResponse(null, {
+          accessToken,
+          refreshToken: '안전하게 저장되었습니다.',
+        }),
+      );
     },
   );
 
@@ -165,7 +177,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authorizationError} : 비밀번호 불일치`,
           STATUS_CODE.FORBIDDEN,
-          'FORBIDDEN',
+          'FORBIDDEN : : 비밀번호 불일치',
         );
       }
       res.status(STATUS_CODE.OK).json(buildResponse(null, null));
@@ -279,7 +291,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authenticationError} : 가입내역 없음`,
           STATUS_CODE.BAD_REQUEST,
-          'BAD_REQUEST',
+          'BAD_REQUEST : 가입내역 없음',
         );
       }
 
@@ -287,7 +299,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authorizationError} : 탈퇴`,
           STATUS_CODE.FORBIDDEN,
-          'FORBIDDEN',
+          'FORBIDDEN : 탈퇴',
         );
       }
       const validPassword = await bcrypt.compare(password, user.password);
@@ -295,7 +307,7 @@ class UserController {
         throw new AppError(
           `${commonErrors.authorizationError} : 비밀번호 불일치`,
           STATUS_CODE.FORBIDDEN,
-          'FORBIDDEN',
+          'FORBIDDEN : 비밀번호 불일치',
         );
       }
 
@@ -317,6 +329,48 @@ class UserController {
         role: 'disabled',
       });
       res.status(STATUS_CODE.OK).json(buildResponse(null, disabledUser));
+    },
+  );
+
+  //-----refresh 토큰 확인 및 발급----
+  public changeTokenStatus = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const userRefreshToken = req.cookies.refreshToken;
+      const user = await this.userService.getUserByRefreshToken(
+        userRefreshToken,
+      );
+
+      let accessToken;
+      let refreshToken;
+
+      if (isRefreshTokenExpired(userRefreshToken)) {
+        // refreshToken이 만료된 경우 새로운 accessToken과 refreshToken 발급
+        accessToken = makeAccessToken(user);
+        refreshToken = makeRefreshToken(user);
+
+        await this.userService.changeRefreshToken(user?.id, refreshToken);
+
+        res.cookie('accessToken', accessToken, { httpOnly: true });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true });
+        res.status(STATUS_CODE.CREATED).json(
+          buildResponse(null, {
+            accessToken,
+            refreshToken: '리프레쉬토큰 만료되어 재발급, 액세스토큰도 재발급.',
+          }),
+        );
+      } else {
+        // refreshToken이 만료되지 않은 경우 accessToken만 새로 발급
+        accessToken = makeAccessToken(user);
+
+        res.cookie('accessToken', accessToken, { httpOnly: true });
+      }
+
+      res.status(STATUS_CODE.CREATED).json(
+        buildResponse(null, {
+          accessToken,
+          refreshToken: '리프레쉬토큰 만료 전으로 유지, 액세스토큰은 재발급.',
+        }),
+      );
     },
   );
 }

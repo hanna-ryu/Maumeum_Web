@@ -16,6 +16,9 @@ userRouter.post('/signup', userController.createUser);
 //로그인
 userRouter.post('/login', userController.userLogin);
 
+//accessToken 재발급
+userRouter.get('/refresh', userController.changeTokenStatus);
+
 //비밀번호 확인
 userRouter.post('/users/auth', loginRequired, userController.userAuthorization);
 

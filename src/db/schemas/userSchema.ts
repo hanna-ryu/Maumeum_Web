@@ -36,6 +36,9 @@ class User {
 
   @prop({ default: false })
   public authorization!: boolean;
+
+  @prop()
+  public refreshToken?: string;
 }
 
 export { User };

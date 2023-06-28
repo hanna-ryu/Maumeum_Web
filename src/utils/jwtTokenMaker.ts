@@ -4,15 +4,32 @@ import 'dotenv/config';
 type Token = {
   token: string;
   uuid: string;
+  role: string;
 };
 
-function makeJwtToken(user: any) {
+function makeAccessToken(user: any) {
   const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
-  const token = jwt.sign({ user_id: user._id, role: user.role }, secretKey);
-  const userInfoWithUserToken = <Token>{};
-  userInfoWithUserToken.token = token;
-  userInfoWithUserToken.uuid = user.uuid;
+  const token = jwt.sign({ user_id: user._id, role: user.role }, secretKey, {
+    expiresIn: '1h',
+  });
+  const userInfoWithUserToken: Token = {
+    token,
+    uuid: user.uuid,
+    role: user.role,
+  };
+
   return userInfoWithUserToken;
 }
 
-export { makeJwtToken };
+function makeRefreshToken(user: any) {
+  const secretKey = process.env.REFRESH_JWT_SECRET_KEY || 'secret-key';
+  const token = jwt.sign({ user_id: user._id }, secretKey, {
+    expiresIn: '14 days',
+  });
+  const userInfoWithUserToken = token;
+  // userInfoWithUserToken.token = token;
+
+  return userInfoWithUserToken;
+}
+
+export { makeAccessToken, makeRefreshToken };
