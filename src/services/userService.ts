@@ -44,6 +44,17 @@ class UserService {
     return createdUser;
   }
 
+  public async changeRefreshToken(user_id: ObjectId, refreshToken: string) {
+    const user = await UserModel.findById(user_id);
+    if (!user) {
+      // 사용자를 찾지 못한 경우 예외 처리
+      throw new Error('User not found');
+    }
+
+    user.refreshToken = refreshToken;
+    await user.save();
+  }
+
   //이메일로 유저 찾기
   public async getUserByEmail(email: string) {
     const user = await UserModel.findOne({ email });

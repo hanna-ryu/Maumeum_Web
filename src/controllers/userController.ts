@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../services/index.js';
 import bcrypt from 'bcrypt';
-import { makeJwtToken } from '../utils/jwtTokenMaker.js';
+import { makeAccessToken, makeRefreshToken } from '../utils/jwtTokenMaker.js';
 import { ObjectId } from 'mongodb';
 import { CONSTANTS } from '../utils/Constants.js';
 import { asyncHandler } from '../middlewares/asyncHandler.js';
@@ -138,8 +138,14 @@ class UserController {
           'FORBIDDEN',
         );
       }
-      const madeToken = makeJwtToken(user);
-      res.status(STATUS_CODE.CREATED).json(buildResponse(null, madeToken));
+      const accessToken = makeAccessToken(user);
+      const refreshToken = makeRefreshToken(user);
+
+      await this.userService.changeRefreshToken(user.id, refreshToken.token);
+
+      res
+        .status(STATUS_CODE.CREATED)
+        .json(buildResponse(null, { accessToken, refreshToken }));
     },
   );
 
