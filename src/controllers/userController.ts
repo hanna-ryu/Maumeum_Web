@@ -12,6 +12,10 @@ import { AppError } from '../misc/AppError.js';
 import { commonErrors } from '../misc/commonErrors.js';
 import { logger } from '../utils/logger.js';
 import { isRefreshTokenExpired } from '../middlewares/isRefreshTokenExpired.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 declare global {
   namespace Express {
     interface Request {
@@ -142,8 +146,14 @@ class UserController {
       const accessToken = makeAccessToken(user);
       const refreshToken = makeRefreshToken(user);
 
-      res.cookie('accessToken', accessToken.token, { httpOnly: true });
-      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      res.cookie('accessToken', accessToken.token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 60 * 60 * 1000),
+      });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 60 * 60 * 1000),
+      });
       await this.userService.changeRefreshToken(user.id, refreshToken);
 
       res.status(STATUS_CODE.CREATED).json(
@@ -350,8 +360,14 @@ class UserController {
 
         await this.userService.changeRefreshToken(user?.id, refreshToken);
 
-        res.cookie('accessToken', accessToken, { httpOnly: true });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true });
+        res.cookie('accessToken', accessToken, {
+          httpOnly: true,
+          expires: new Date(Date.now() + 60 * 60 * 1000),
+        });
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          expires: new Date(Date.now() + 60 * 60 * 1000),
+        });
         res.status(STATUS_CODE.CREATED).json(
           buildResponse(null, {
             accessToken,
@@ -362,7 +378,10 @@ class UserController {
         // refreshToken이 만료되지 않은 경우 accessToken만 새로 발급
         accessToken = makeAccessToken(user);
 
-        res.cookie('accessToken', accessToken, { httpOnly: true });
+        res.cookie('accessToken', accessToken, {
+          httpOnly: true,
+          expires: new Date(Date.now() + 60 * 60 * 1000),
+        });
       }
 
       res.status(STATUS_CODE.CREATED).json(
