@@ -21,7 +21,12 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use(cors()); //cors에러 방지
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+); //cors에러 방지
 app.use(cookieParser());
 app.use(express.json()); // 바디파서
 app.use(express.urlencoded({ extended: true }));
