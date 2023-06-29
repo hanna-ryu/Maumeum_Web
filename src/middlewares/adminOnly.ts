@@ -13,7 +13,7 @@ interface JwtPayload {
 }
 
 function adminOnly(req: Request, res: Response, next: NextFunction) {
-  const userToken = req.headers['authorization']?.split(' ')[1];
+  const userToken = req.cookies.accessToken;
 
   if (!userToken || userToken === null) {
     logger.info('Authorization 토큰 없음');
@@ -22,8 +22,8 @@ function adminOnly(req: Request, res: Response, next: NextFunction) {
       .json(
         buildResponse(
           'forbidden-approach',
-          '로그인한 유저만 사용할 수 있는 서비스입니다.'
-        )
+          '로그인한 유저만 사용할 수 있는 서비스입니다.',
+        ),
       );
 
     return;
@@ -42,7 +42,7 @@ function adminOnly(req: Request, res: Response, next: NextFunction) {
       throw new AppError(
         '관리자가 아닙니다.',
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST : 관리자가 아닙니다.',
       );
     }
 
@@ -56,8 +56,8 @@ function adminOnly(req: Request, res: Response, next: NextFunction) {
       .json(
         buildResponse(
           commonErrors.authorizationError,
-          '관리자만 사용할 수 있는 서비스입니다.'
-        )
+          '관리자만 사용할 수 있는 서비스입니다.',
+        ),
       );
   }
 }

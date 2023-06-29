@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../services/index.js';
 import bcrypt from 'bcrypt';
-import { makeAccessToken, makeRefreshToken } from '../utils/jwtTokenMaker.js';
+import {
+  makeAccessToken,
+  makeRefreshToken,
+} from '../middlewares/jwtTokenMaker.js';
 import { ObjectId } from 'mongodb';
 import { CONSTANTS } from '../utils/Constants.js';
 import { asyncHandler } from '../middlewares/asyncHandler.js';

@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { logger } from '../utils/logger.js';
 import { makeInstance } from '../utils/makeInstance.js';
 import { UserService } from '../services/userService.js';
-import { makeAccessToken, makeRefreshToken } from '../utils/jwtTokenMaker.js';
+import { makeAccessToken, makeRefreshToken } from './jwtTokenMaker.js';
 
 interface JwtPayload {
   user_id: ObjectId;
