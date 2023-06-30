@@ -151,11 +151,11 @@ class UserController {
 
       res.cookie('accessToken', accessToken.token, {
         httpOnly: true,
-        expires: new Date(Date.now() + 60 * 60 * 1000),
+        expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
       });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        expires: new Date(Date.now() + 60 * 60 * 1000),
+        expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
       });
       await this.userService.changeRefreshToken(user.id, refreshToken);
 
@@ -365,11 +365,11 @@ class UserController {
 
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
-          expires: new Date(Date.now() + 60 * 60 * 1000),
+          expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
         });
         res.cookie('refreshToken', refreshToken, {
           httpOnly: true,
-          expires: new Date(Date.now() + 60 * 60 * 1000),
+          expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
         });
         res.status(STATUS_CODE.CREATED).json(
           buildResponse(null, {
@@ -383,7 +383,7 @@ class UserController {
 
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
-          expires: new Date(Date.now() + 60 * 60 * 1000),
+          expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
         });
       }
 
