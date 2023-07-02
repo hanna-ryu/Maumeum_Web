@@ -168,6 +168,15 @@ class UserController {
     },
   );
 
+  //유저 로그아웃
+  public userLogout = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      res.status(STATUS_CODE.OK).json(buildResponse(null, null));
+    },
+  );
+
   public userAuthorization = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
       const user_id = req.id;

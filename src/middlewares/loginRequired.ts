@@ -2,9 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { logger } from '../utils/logger.js';
-import { makeInstance } from '../utils/makeInstance.js';
-import { UserService } from '../services/userService.js';
-import { makeAccessToken, makeRefreshToken } from './jwtTokenMaker.js';
 
 interface JwtPayload {
   user_id: ObjectId;
@@ -21,6 +18,7 @@ declare global {
 }
 
 async function loginRequired(req: Request, res: Response, next: NextFunction) {
+  console.log(req);
   const userToken = req.cookies.accessToken;
 
   if (!userToken || userToken === null) {

@@ -14,7 +14,7 @@ interface JwtPayload {
 
 function adminOnly(req: Request, res: Response, next: NextFunction) {
   const userToken = req.cookies.accessToken;
-
+  console.log('🚀 ~ file: adminOnly.ts:17 ~ adminOnly ~ userToken:', userToken);
   if (!userToken || userToken === null) {
     logger.info('Authorization 토큰 없음');
     res
