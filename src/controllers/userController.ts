@@ -148,14 +148,15 @@ class UserController {
       }
       const accessToken = makeAccessToken(user);
       const refreshToken = makeRefreshToken(user);
+      console.log(new Date(Date.now() + 600));
 
       res.cookie('accessToken', accessToken.token, {
         httpOnly: true,
-        expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
+        maxAge: CONSTANTS.COOKIE_ACCESS_TOKEN_MAX_AGE,
       });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
+        maxAge: CONSTANTS.COOKIE_REFRESH_TOKEN_MAX_AGE,
       });
       await this.userService.changeRefreshToken(user.id, refreshToken);
 
@@ -357,6 +358,8 @@ class UserController {
   //-----refresh 토큰 확인 및 발급----
   public changeTokenStatus = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
+      const userAccessToken = req.cookies.accessToken;
+      console.log(userAccessToken);
       const userRefreshToken = req.cookies.refreshToken;
       const user = await this.userService.getUserByRefreshToken(
         userRefreshToken,
@@ -366,6 +369,7 @@ class UserController {
       let refreshToken;
 
       if (isRefreshTokenExpired(userRefreshToken)) {
+        console.log(isRefreshTokenExpired(userRefreshToken));
         // refreshToken이 만료된 경우 새로운 accessToken과 refreshToken 발급
         accessToken = makeAccessToken(user);
         refreshToken = makeRefreshToken(user);
@@ -374,11 +378,11 @@ class UserController {
 
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
-          expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
+          maxAge: CONSTANTS.COOKIE_ACCESS_TOKEN_MAX_AGE,
         });
         res.cookie('refreshToken', refreshToken, {
           httpOnly: true,
-          expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
+          maxAge: CONSTANTS.COOKIE_REFRESH_TOKEN_MAX_AGE,
         });
         res.status(STATUS_CODE.CREATED).json(
           buildResponse(null, {
@@ -392,7 +396,7 @@ class UserController {
 
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
-          expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
+          maxAge: CONSTANTS.COOKIE_ACCESS_TOKEN_MAX_AGE,
         });
       }
 
