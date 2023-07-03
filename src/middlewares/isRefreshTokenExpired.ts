@@ -16,7 +16,6 @@ function isRefreshTokenExpired(refreshToken: string) {
       throw new Error('Invalid refreshToken');
     }
 
-    console.log(decodedToken);
     // "exp" 클레임의 값으로부터 만료 시간을 계산합니다.
     const expirationDate = new Date(decodedToken.exp * 1000); // JWT의 "exp" 값은 초 단위이므로 밀리초로 변환합니다.
 

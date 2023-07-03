@@ -27,7 +27,6 @@ app.use(
     credentials: true,
   }),
 ); //cors에러 방지
-console.log(process.env.FRONT_SERVER);
 app.use(cookieParser());
 app.use(express.json()); // 바디파서
 app.use(express.urlencoded({ extended: true }));

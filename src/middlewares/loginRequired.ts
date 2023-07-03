@@ -18,7 +18,6 @@ declare global {
 }
 
 async function loginRequired(req: Request, res: Response, next: NextFunction) {
-  console.log(req);
   const userToken = req.cookies.accessToken;
 
   if (!userToken || userToken === null) {
