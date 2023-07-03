@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import { CONSTANTS } from '../utils/Constants.js';
 
 type Token = {
   token: string;
@@ -10,7 +11,7 @@ type Token = {
 function makeAccessToken(user: any) {
   const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
   const token = jwt.sign({ user_id: user._id, role: user.role }, secretKey, {
-    expiresIn: '1h',
+    expiresIn: CONSTANTS.JWT_ACCESS_TOKEN_EXPIRES,
   });
   const userInfoWithUserToken: Token = {
     token,
