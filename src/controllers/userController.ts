@@ -150,11 +150,11 @@ class UserController {
       const refreshToken = makeRefreshToken(user);
 
       res.cookie('accessToken', accessToken.token, {
-        httpOnly: false,
+        httpOnly: true,
         expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
       });
       res.cookie('refreshToken', refreshToken, {
-        httpOnly: false,
+        httpOnly: true,
         expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
       });
       await this.userService.changeRefreshToken(user.id, refreshToken);
@@ -373,11 +373,11 @@ class UserController {
         await this.userService.changeRefreshToken(user?.id, refreshToken);
 
         res.cookie('accessToken', accessToken, {
-          httpOnly: false,
+          httpOnly: true,
           expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
         });
         res.cookie('refreshToken', refreshToken, {
-          httpOnly: false,
+          httpOnly: true,
           expires: CONSTANTS.COOKIE_REFRESH_TOKEN_EXPIRE_DATE,
         });
         res.status(STATUS_CODE.CREATED).json(
@@ -391,7 +391,7 @@ class UserController {
         accessToken = makeAccessToken(user);
 
         res.cookie('accessToken', accessToken, {
-          httpOnly: false,
+          httpOnly: true,
           expires: CONSTANTS.COOKIE_ACCESS_TOKEN_EXPIRE_DATE,
         });
       }
