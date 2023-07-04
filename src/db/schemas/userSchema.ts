@@ -38,6 +38,9 @@ class User {
   public authorization!: boolean;
 
   @prop()
+  public teamAuth_id?: string;
+
+  @prop()
   public refreshToken?: string;
 }
 

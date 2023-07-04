@@ -107,7 +107,12 @@ class TeamAuthController {
         updateInfo,
       );
 
-      const userInfo = await this.userService.getUserById(user_id);
+      const updatedUserInfo: {} = { teamAuth_id: teamAuth_id };
+      const userInfo = await this.userService.updateUser(
+        user_id,
+        updatedUserInfo,
+      );
+      console.log(userInfo);
       if (!userInfo) {
         throw new AppError(
           `${commonErrors.resourceNotFoundError} : 해당하는 유저 정보가 없습니다.`,
