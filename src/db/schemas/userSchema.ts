@@ -13,8 +13,8 @@ class User {
   @prop({ default: uuidv4 })
   public uuid!: string;
 
-  @prop({ required: true, default: 'images/default-profile-image.png' })
-  public image!: string;
+  @prop()
+  public image?: string;
 
   @prop({ required: true, unique: true })
   public email!: string;

@@ -13,7 +13,7 @@ interface UserInfo {
   nanoid?: string;
   introduction?: string;
   authorization?: boolean;
-  image?: string;
+  image?: string | null | undefined;
   email?: string;
   password?: string;
   phone?: string;
