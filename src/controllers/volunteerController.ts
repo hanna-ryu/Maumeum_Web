@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserService, VolunteerService } from '../services/index.js';
+import {
+  TeamAuthService,
+  UserService,
+  VolunteerService,
+} from '../services/index.js';
 import { STATUS_CODE } from '../utils/statusCode.js';
 import { asyncHandler } from '../middlewares/asyncHandler.js';
 import { makeInstance } from '../utils/makeInstance.js';
@@ -21,6 +25,7 @@ interface MyFile extends Express.Multer.File {
 class VolunteerController {
   private volunteerService = makeInstance<VolunteerService>(VolunteerService);
   private userService = makeInstance<UserService>(UserService);
+  private teamAuthService = makeInstance<TeamAuthService>(TeamAuthService);
 
   public postVolunteer = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -124,8 +129,27 @@ class VolunteerController {
       const volunteer = await this.volunteerService.readVolunteerById(
         volunteerId,
       );
+      console.log(
+        '🚀 ~ file: volunteerController.ts:132 ~ VolunteerController ~ volunteer:',
+        volunteer,
+      );
+      console.log(
+        '🚀 ~ file: volunteerController.ts:137 ~ VolunteerController ~  volunteer.register_user_id:',
+        volunteer.register_user_id,
+      );
 
-      res.status(STATUS_CODE.OK).json(buildResponse(null, volunteer));
+      const teamAuthInfo = await this.teamAuthService.readTeamAuthByUid(
+        volunteer.register_user_id as ObjectId,
+      );
+
+      console.log(
+        '🚀 ~ file: volunteerController.ts:138 ~ VolunteerController ~ teamAuthInfo:',
+        teamAuthInfo,
+      );
+
+      res
+        .status(STATUS_CODE.OK)
+        .json(buildResponse(null, { volunteer, teamAuthInfo }));
     },
   );
 
