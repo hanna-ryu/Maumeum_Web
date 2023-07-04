@@ -20,6 +20,7 @@ interface MyFile extends Express.Multer.File {
   // 예: 필요한 경우 가공된 파일 경로 등
   processedPath: string;
   key: string;
+  location: string;
 }
 
 class VolunteerController {
@@ -47,7 +48,7 @@ class VolunteerController {
       if (req.files) {
         const files = req.files as MyFile[];
         const newPath = files.map((file) => {
-          return `${file.key}`;
+          return `${file.location}`;
         });
 
         volunteerData = {

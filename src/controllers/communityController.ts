@@ -15,6 +15,7 @@ interface MyFile extends Express.Multer.File {
   // 예: 필요한 경우 가공된 파일 경로 등
   processedPath: string;
   key: string;
+  location: string;
 }
 
 export class CommunityController {
@@ -86,7 +87,6 @@ export class CommunityController {
   //keyword 로 게시물 조회
   public searchPost = asyncHandler(async (req: Request, res: Response) => {
     const { keyword, posttype, limit, skip } = req.query;
-    //community/serach?keyword=${keyword}&posttype=findfreind
 
     // qna findfreind
     const posts = await this.communityService.searchPost(
@@ -140,7 +140,7 @@ export class CommunityController {
       if (req.files) {
         const files = req.files as MyFile[];
         const newPath = files.map((file) => {
-          return `${file.key}`;
+          return `${file.location}`;
         });
 
         const patchPosts = await this.communityService.findOneAndUpdate(id, {
