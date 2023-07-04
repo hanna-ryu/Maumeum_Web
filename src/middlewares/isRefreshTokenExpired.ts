@@ -25,7 +25,6 @@ function isRefreshTokenExpired(refreshToken: string) {
   const refreshTokenExpirationDate =
     getRefreshTokenExpirationDate(refreshToken).getTime(); // 밀리초로 변환하여 가져옵니다.
   const currentTime = Date.now();
-  console.log(refreshTokenExpirationDate <= currentTime);
   return refreshTokenExpirationDate <= currentTime;
 }
 

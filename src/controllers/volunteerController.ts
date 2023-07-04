@@ -129,24 +129,10 @@ class VolunteerController {
       const volunteer = await this.volunteerService.readVolunteerById(
         volunteerId,
       );
-      console.log(
-        '🚀 ~ file: volunteerController.ts:132 ~ VolunteerController ~ volunteer:',
-        volunteer,
-      );
-      console.log(
-        '🚀 ~ file: volunteerController.ts:137 ~ VolunteerController ~  volunteer.register_user_id:',
-        volunteer.register_user_id,
-      );
 
       const teamAuthInfo = await this.teamAuthService.readTeamAuthByUid(
         volunteer.register_user_id as ObjectId,
       );
-
-      console.log(
-        '🚀 ~ file: volunteerController.ts:138 ~ VolunteerController ~ teamAuthInfo:',
-        teamAuthInfo,
-      );
-
       res
         .status(STATUS_CODE.OK)
         .json(buildResponse(null, { volunteer, teamAuthInfo }));

@@ -148,7 +148,6 @@ class UserController {
       }
       const accessToken = makeAccessToken(user);
       const refreshToken = makeRefreshToken(user);
-      console.log(new Date(Date.now() + 600));
 
       res.cookie('accessToken', accessToken.token, {
         httpOnly: true,
@@ -359,7 +358,6 @@ class UserController {
   public changeTokenStatus = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
       const userAccessToken = req.cookies.accessToken;
-      console.log(userAccessToken);
       const userRefreshToken = req.cookies.refreshToken;
       const user = await this.userService.getUserByRefreshToken(
         userRefreshToken,
@@ -369,7 +367,6 @@ class UserController {
       let refreshToken;
 
       if (isRefreshTokenExpired(userRefreshToken)) {
-        console.log(isRefreshTokenExpired(userRefreshToken));
         // refreshToken이 만료된 경우 새로운 accessToken과 refreshToken 발급
         accessToken = makeAccessToken(user);
         refreshToken = makeRefreshToken(user);

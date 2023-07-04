@@ -112,7 +112,6 @@ class TeamAuthController {
         user_id,
         updatedUserInfo,
       );
-      console.log(userInfo);
       if (!userInfo) {
         throw new AppError(
           `${commonErrors.resourceNotFoundError} : 해당하는 유저 정보가 없습니다.`,
