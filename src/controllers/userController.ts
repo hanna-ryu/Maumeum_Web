@@ -288,7 +288,7 @@ class UserController {
       const user_id = req.id;
       const updateInfo: {
         image?: string | null | undefined;
-      } = { image: undefined };
+      } = { image: null };
 
       const updatedUser = await this.userService.updateUser(
         user_id,
