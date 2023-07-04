@@ -27,6 +27,12 @@ declare global {
     }
   }
 }
+
+interface MyFile extends Express.Multer.File {
+  processedPath: string;
+  key: string;
+  location: string;
+}
 interface UserLoginInfo {
   email: string;
   password: string;
@@ -263,16 +269,13 @@ class UserController {
   public updateImage = asyncHandler(
     async (req: UpdateUserInfoRequest, res: Response, next: NextFunction) => {
       const user_id = req.id;
-      //@ts-ignore
-      const image = `images/${req.file.filename}`;
-      logger.debug(image);
-      //@ts-ignore
+      const image = req.file as MyFile;
       const updateInfo: {
         image?: string;
       } = {};
 
       if (image) {
-        updateInfo.image = image;
+        updateInfo.image = image.location;
       }
 
       const updatedUser = await this.userService.updateUser(
