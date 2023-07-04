@@ -29,15 +29,11 @@ async function loginRequired(req: Request, res: Response, next: NextFunction) {
     return;
   }
 
-  let user_id: ObjectId | null = null;
-
   try {
     const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
     const jwtDecoded = jwt.verify(userToken, secretKey) as JwtPayload;
-
-    const { user_id: decodedUserId, role } = jwtDecoded;
-    logger.debug('user_id: ' + decodedUserId + ' role: ' + role);
-    user_id = decodedUserId;
+    const { user_id, role } = jwtDecoded;
+    logger.debug('user_id: ' + user_id + ' role: ' + role);
     req.id = user_id;
     req.role = role;
     logger.debug('디코딩 성공');

@@ -361,42 +361,26 @@ class UserController {
       let refreshToken;
 
       if (isRefreshTokenExpired(userRefreshToken)) {
-        // refreshToken이 만료된 경우 새로운 accessToken과 refreshToken 발급
-        accessToken = makeAccessToken(user);
-        refreshToken = makeRefreshToken(user);
-
-        await this.userService.changeRefreshToken(user?.id, refreshToken);
+        // refreshToken이 만료된 경우
+        res
+          .status(STATUS_CODE.FORBIDDEN)
+          .json(buildResponse(null, '리프레쉬토큰 만료. 다시 로그인하세요'));
+      } else {
+        // refreshToken이 만료되지 않은 경우
+        accessToken = makeAccessToken(user).token;
 
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
           maxAge: CONSTANTS.COOKIE_ACCESS_TOKEN_MAX_AGE,
         });
-        res.cookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          maxAge: CONSTANTS.COOKIE_REFRESH_TOKEN_MAX_AGE,
-        });
+
         res.status(STATUS_CODE.CREATED).json(
           buildResponse(null, {
             accessToken,
-            refreshToken: '리프레쉬토큰 만료되어 재발급, 액세스토큰도 재발급.',
+            refreshToken: '리프레쉬토큰 만료 전으로 유지, 액세스토큰만 재발급.',
           }),
         );
-      } else {
-        // refreshToken이 만료되지 않은 경우 accessToken만 새로 발급
-        accessToken = makeAccessToken(user);
-
-        res.cookie('accessToken', accessToken, {
-          httpOnly: true,
-          maxAge: CONSTANTS.COOKIE_ACCESS_TOKEN_MAX_AGE,
-        });
       }
-
-      res.status(STATUS_CODE.CREATED).json(
-        buildResponse(null, {
-          accessToken,
-          refreshToken: '리프레쉬토큰 만료 전으로 유지, 액세스토큰은 재발급.',
-        }),
-      );
     },
   );
 }
