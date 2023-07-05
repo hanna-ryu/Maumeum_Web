@@ -4,6 +4,7 @@ import { AppError } from '../misc/AppError.js';
 import { commonErrors } from '../misc/commonErrors.js';
 import { STATUS_CODE } from '../utils/statusCode.js';
 import { searchOption } from '../utils/searchOptions.js';
+import { logger } from '../utils/logger.js';
 
 interface VolunteerData {
   title: string;
@@ -58,7 +59,7 @@ class VolunteerService {
       throw new AppError(
         commonErrors.inputError,
         STATUS_CODE.FORBIDDEN,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
@@ -66,7 +67,7 @@ class VolunteerService {
       throw new AppError(
         commonErrors.inputError,
         STATUS_CODE.FORBIDDEN,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
     const createVolunteer = await VolunteerModel.create(volunteerData);
@@ -75,7 +76,7 @@ class VolunteerService {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
     return createVolunteer;
@@ -84,11 +85,11 @@ class VolunteerService {
   public async readVolunteer(
     skip: number,
     limit: number,
-    statusName: string | { $in: string[] }
+    statusName: string | { $in: string[] },
   ) {
     const volunteerList = await VolunteerModel.find({ statusName: statusName })
       .select(
-        'title centName deadline statusName applyCount registerCount images createdAt register_user_id'
+        'title centName deadline statusName applyCount registerCount images createdAt register_user_id',
       )
       .populate('register_user_id', ['image', 'nickname', 'uuid'])
       .skip(skip)
@@ -107,7 +108,7 @@ class VolunteerService {
           ...volunteer.toObject(),
           teamName,
         };
-      })
+      }),
     );
 
     return updatedVolunteerList;
@@ -147,7 +148,7 @@ class VolunteerService {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
@@ -157,7 +158,7 @@ class VolunteerService {
   public async readSearchVolunteer(
     keyword: string,
     skip: number,
-    limit: number
+    limit: number,
   ) {
     const options = searchOption(keyword);
 
@@ -180,7 +181,7 @@ class VolunteerService {
           ...volunteer.toObject(),
           teamName,
         };
-      })
+      }),
     );
 
     return updatedVolunteerList;
@@ -189,7 +190,7 @@ class VolunteerService {
   public async readRegistrationVolunteer(
     user_id: ObjectId,
     skip: number,
-    limit: number
+    limit: number,
   ) {
     const volunteerList = await VolunteerModel.find({
       register_user_id: user_id,
@@ -204,18 +205,18 @@ class VolunteerService {
 
   public async updateVolunteer(
     volunteer_id: string,
-    volunteerData: VolunteerData
+    volunteerData: VolunteerData,
   ) {
     const volunteer = await VolunteerModel.findByIdAndUpdate(
       volunteer_id,
-      volunteerData
+      volunteerData,
     );
 
     if (!volunteer) {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
     return true;
@@ -223,18 +224,18 @@ class VolunteerService {
 
   public async updateVolunteerApplyCount(
     volunteer_id: string,
-    applyCount: VolunteerApplyCountData
+    applyCount: VolunteerApplyCountData,
   ) {
     const volunteer = await VolunteerModel.findByIdAndUpdate(
       volunteer_id,
-      applyCount
+      applyCount,
     );
 
     if (!volunteer) {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
@@ -243,18 +244,18 @@ class VolunteerService {
 
   public async updateRegisterationVolunteer(
     volunteerId: string,
-    volunteerData: VolunteerStatus
+    volunteerData: VolunteerStatus,
   ) {
     const volunteer = await VolunteerModel.findByIdAndUpdate(
       volunteerId,
-      volunteerData
+      volunteerData,
     );
 
     if (!volunteer) {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
@@ -263,18 +264,18 @@ class VolunteerService {
 
   public async updateReportVolunteer(
     volunteerId: string,
-    isReported: VolunteerReportData
+    isReported: VolunteerReportData,
   ) {
     const volunteer = await VolunteerModel.findByIdAndUpdate(
       volunteerId,
-      isReported
+      isReported,
     );
 
     if (!volunteer) {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
@@ -297,18 +298,33 @@ class VolunteerService {
 
   public async deleteReportedVolunteer(volunteer_id: string) {
     const volunteer = await VolunteerModel.findByIdAndDelete(
-      volunteer_id
+      volunteer_id,
     ).populate('register_user_id', 'reportedTimes');
 
     if (!volunteer) {
       throw new AppError(
         commonErrors.resourceNotFoundError,
         STATUS_CODE.BAD_REQUEST,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
 
     return volunteer;
+  }
+
+  public async changeStatusNameAtMidnight() {
+    const currentDate = new Date();
+    const volunteers = await VolunteerModel.find({
+      statusName: '모집중',
+    }).select('endDate statusName');
+
+    for (const volunteer of volunteers) {
+      if (volunteer.endDate < currentDate) {
+        volunteer.statusName = '모집완료';
+        await volunteer.save();
+        logger.debug(volunteer);
+      }
+    }
   }
 }
 

@@ -222,10 +222,7 @@ class ReviewService {
           now.minus({ days: CONSTANTS.CHANGING_DATE })
       ) {
         apply.isParticipate = true;
-        volunteer.statusName = '모집완료';
         await volunteer.save();
-        await apply.save();
-        logger.debug(`volunteer : ${volunteer}`);
         logger.debug(`apply : ${apply}`);
       }
     }
