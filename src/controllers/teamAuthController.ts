@@ -9,6 +9,11 @@ import { asyncHandler } from '../middlewares/asyncHandler.js';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '../middlewares/nodeMailer.js';
 
+interface MyFile extends Express.Multer.File {
+  processedPath: string;
+  key: string;
+  location: string;
+}
 class TeamAuthController {
   private teamAuthService = makeInstance<TeamAuthService>(TeamAuthService);
   private userService = makeInstance<UserService>(UserService);
@@ -32,7 +37,8 @@ class TeamAuthController {
           'BAD_REQUEST',
         );
       }
-      const image = `images/${req.file.filename}`;
+      const image = req.file as MyFile;
+
       const createdTeamAuth = await this.teamAuthService.createTeamAuth({
         user_id,
         category,
@@ -42,7 +48,7 @@ class TeamAuthController {
         establishmentDate,
         phone,
         location,
-        image,
+        image: image.location,
       });
 
       res
