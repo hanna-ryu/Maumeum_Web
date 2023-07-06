@@ -16,7 +16,7 @@ const sendMail = async (email: String, nickname: String, teamName: string) => {
     html: `
     
     <h2>팀 ${teamName}의 인증이 완료되었습니다. 로그인하여 확인해주세요.</h2>
-    <a href="http://kdt-sw-4-team01.elicecoding.com/">http://kdt-sw-4-team01.elicecoding.com/</a>
+    <a href="http://maumeum.site/">http://maumeum.site/</a>
   `,
   };
 
