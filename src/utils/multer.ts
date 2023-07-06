@@ -53,8 +53,11 @@ const upload = multer({
 const imageUploader = (req: Request, res: Response, next: NextFunction) => {
   upload.single('image')(req, res, (err) => {
     if (err) {
-      console.error(err);
-      return res.status(400).json({ error: err.message });
+      new AppError(
+        commonErrors.argumentError,
+        STATUS_CODE.BAD_REQUEST,
+        'jpg, jpeg, png 파일들로 각 10mb 이하의 파일만 가능합니다.',
+      );
     } else {
       next();
     }
@@ -64,8 +67,11 @@ const imageUploader = (req: Request, res: Response, next: NextFunction) => {
 const imagesUploader = (req: Request, res: Response, next: NextFunction) => {
   upload.array('images')(req, res, (err) => {
     if (err) {
-      console.error(err);
-      return res.status(400).json({ error: err.message });
+      new AppError(
+        commonErrors.argumentError,
+        STATUS_CODE.BAD_REQUEST,
+        'jpg, jpeg, png 파일들로 최대 5장, 각 10mb 이하의 파일만 가능합니다.',
+      );
     } else {
       next();
     }
