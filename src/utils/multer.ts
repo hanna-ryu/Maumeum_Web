@@ -43,7 +43,7 @@ const upload = multer({
         new AppError(
           commonErrors.argumentError,
           STATUS_CODE.BAD_REQUEST,
-          'jpg, jpeg, png 파일만 가능하며, 10mb 이하의 파일만 가능합니다.',
+          'jpg, jpeg, png 파일들로 최대 5장, 각 10mb 이하의 파일만 가능합니다.',
         ),
       );
     }
