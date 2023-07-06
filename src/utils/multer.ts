@@ -4,6 +4,9 @@ import multerS3 from 'multer-s3';
 import path from 'path';
 import dotenv from 'dotenv';
 import { S3Client } from '@aws-sdk/client-s3';
+import { AppError } from '../misc/AppError.js';
+import { commonErrors } from '../misc/commonErrors.js';
+import { STATUS_CODE } from './statusCode.js';
 
 dotenv.config();
 
@@ -36,7 +39,13 @@ const upload = multer({
     if (allowedFileTypes.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error('올바른 파일 형식 및 크기를 선택하세요.'));
+      cb(
+        new AppError(
+          commonErrors.argumentError,
+          STATUS_CODE.BAD_REQUEST,
+          'jpg, jpeg, png 파일만 가능하며, 10mb 이하의 파일만 가능합니다.',
+        ),
+      );
     }
   },
 });
