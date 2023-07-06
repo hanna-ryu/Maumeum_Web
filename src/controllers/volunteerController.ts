@@ -44,6 +44,43 @@ class VolunteerController {
         );
       }
 
+      const fieldTranslations: { [key: string]: string } = {
+        title: '제목',
+        content: '내용',
+        deadline: '모집 마감일',
+        startDate: '활동 시작일',
+        endDate: '활동 종료일',
+        registerCount: '모집인원',
+        actType: '카테고리',
+        teenager: '미성년자 참여 여부',
+      };
+
+      const requiredFields = [
+        'title',
+        'content',
+        'deadline',
+        'startDate',
+        'endDate',
+        'registerCount',
+        'actType',
+        'teenager',
+      ];
+
+      const missingFields = requiredFields.filter(
+        (field) => !volunteerBodyData[field],
+      );
+
+      if (missingFields.length > 0) {
+        const missingFieldsMessage = missingFields
+          .map((field) => fieldTranslations[field])
+          .join(', ');
+        throw new AppError(
+          `필수 필드 [${missingFieldsMessage}](이)가 누락되었습니다. `,
+          STATUS_CODE.BAD_REQUEST,
+          `BAD_REQUEST: 필수 필드가 누락되었습니다: ${missingFieldsMessage}`,
+        );
+      }
+
       let volunteerData;
       if (req.files) {
         const files = req.files as MyFile[];
