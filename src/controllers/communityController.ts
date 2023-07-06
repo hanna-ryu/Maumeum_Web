@@ -30,7 +30,7 @@ export class CommunityController {
     if (req.files) {
       const files = req.files as MyFile[];
       const newPath = files.map((file) => {
-        return `${file.key}`;
+        return `${file.location}`;
       });
 
       const newPost = await this.communityService.createPost({
