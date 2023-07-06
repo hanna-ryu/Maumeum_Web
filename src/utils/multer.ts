@@ -7,6 +7,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { AppError } from '../misc/AppError.js';
 import { commonErrors } from '../misc/commonErrors.js';
 import { STATUS_CODE } from './statusCode.js';
+import { error } from 'console';
 
 dotenv.config();
 
@@ -41,9 +42,9 @@ const upload = multer({
     } else {
       cb(
         new AppError(
-          commonErrors.argumentError,
+          `${commonErrors.argumentError} : jpg, jpeg, png 파일들로 최대 5장, 10mb 이하의 파일만 가능합니다.`,
           STATUS_CODE.BAD_REQUEST,
-          'jpg, jpeg, png 파일들로 최대 5장, 각 10mb 이하의 파일만 가능합니다.',
+          'jpg, jpeg, png 파일들로 최대 5장, 10mb 이하의 파일만 가능합니다.',
         ),
       );
     }
@@ -51,13 +52,10 @@ const upload = multer({
 });
 
 const imageUploader = (req: Request, res: Response, next: NextFunction) => {
-  upload.single('image')(req, res, (err) => {
-    if (err) {
-      new AppError(
-        commonErrors.argumentError,
-        STATUS_CODE.BAD_REQUEST,
-        'jpg, jpeg, png 파일들로 각 10mb 이하의 파일만 가능합니다.',
-      );
+  upload.single('image')(req, res, (AppError) => {
+    if (AppError) {
+      console.error(AppError);
+      return res.status(400).json(AppError);
     } else {
       next();
     }
@@ -65,13 +63,10 @@ const imageUploader = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const imagesUploader = (req: Request, res: Response, next: NextFunction) => {
-  upload.array('images')(req, res, (err) => {
-    if (err) {
-      new AppError(
-        commonErrors.argumentError,
-        STATUS_CODE.BAD_REQUEST,
-        'jpg, jpeg, png 파일들로 최대 5장, 각 10mb 이하의 파일만 가능합니다.',
-      );
+  upload.array('images')(req, res, (AppError) => {
+    if (AppError) {
+      console.error(AppError);
+      return res.status(400).json(AppError);
     } else {
       next();
     }
