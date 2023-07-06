@@ -21,9 +21,16 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 app.use('/', express.static(path.join(__dirname, 'public')));
+const frontServers = [];
+if (process.env.FRONT_SERVER) {
+  frontServers.push(process.env.FRONT_SERVER);
+}
+if (process.env.FRONT_SERVER2) {
+  frontServers.push(process.env.FRONT_SERVER2);
+}
 app.use(
   cors({
-    origin: process.env.FRONT_SERVER,
+    origin: frontServers,
     credentials: true,
   }),
 ); //cors에러 방지
